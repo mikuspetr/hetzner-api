@@ -9,7 +9,6 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use RuntimeException;
 
 /**
  * A thin client for the Hetzner Cloud API (https://docs.hetzner.cloud/).
@@ -48,7 +47,7 @@ class HetznerClient
     protected function requestFor(User $user): PendingRequest
     {
         if (! $user->hasHetznerApiToken()) {
-            throw new RuntimeException('This user has not connected a Hetzner Cloud API token yet.');
+            throw new HetznerApiException('This user has not connected a Hetzner Cloud API token yet.');
         }
 
         return $this->requestWithToken($user->hetzner_api_token);
@@ -56,6 +55,8 @@ class HetznerClient
 
     /**
      * Verify that the given token is valid by calling a lightweight endpoint.
+     *
+     * @throws HetznerApiException if the Hetzner Cloud API could not be reached at all.
      */
     public function verifyToken(string $token): bool
     {
@@ -66,7 +67,7 @@ class HetznerClient
                 'message' => $exception->getMessage(),
             ]);
 
-            return false;
+            throw new HetznerApiException('Could not reach the Hetzner Cloud API. Please try again later.');
         }
 
         return $response->successful();

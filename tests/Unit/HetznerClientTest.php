@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Exceptions\HetznerApiException;
 use App\Services\HetznerClient;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -31,7 +32,7 @@ class HetznerClientTest extends TestCase
         $this->assertFalse($client->verifyToken('an-invalid-token'));
     }
 
-    public function test_verify_token_returns_false_when_api_is_unreachable(): void
+    public function test_verify_token_throws_when_api_is_unreachable(): void
     {
         Http::fake([
             'api.hetzner.cloud/*' => fn () => throw new ConnectionException('Connection timed out.'),
@@ -39,6 +40,8 @@ class HetznerClientTest extends TestCase
 
         $client = new HetznerClient;
 
-        $this->assertFalse($client->verifyToken('some-token'));
+        $this->expectException(HetznerApiException::class);
+
+        $client->verifyToken('some-token');
     }
 }

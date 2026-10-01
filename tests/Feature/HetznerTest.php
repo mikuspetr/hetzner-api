@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -55,6 +56,24 @@ class HetznerTest extends TestCase
             ->actingAs($user)
             ->put('/hetzner', [
                 'hetzner_api_token' => 'an-invalid-token',
+            ]);
+
+        $response->assertSessionHasErrorsIn('hetznerToken', ['hetzner_api_token']);
+        $this->assertFalse($user->fresh()->hasHetznerApiToken());
+    }
+
+    public function test_connection_error_while_verifying_token_is_handled_gracefully(): void
+    {
+        Http::fake([
+            'api.hetzner.cloud/*' => fn () => throw new ConnectionException('Connection timed out.'),
+        ]);
+
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->put('/hetzner', [
+                'hetzner_api_token' => 'some-token',
             ]);
 
         $response->assertSessionHasErrorsIn('hetznerToken', ['hetzner_api_token']);

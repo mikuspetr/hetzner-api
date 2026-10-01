@@ -31,7 +31,14 @@ class HetznerController extends Controller
     {
         $token = $request->validated('hetzner_api_token');
 
-        if (! $this->hetzner->verifyToken($token)) {
+        try {
+            $tokenIsValid = $this->hetzner->verifyToken($token);
+        } catch (HetznerApiException $exception) {
+            return Redirect::route('hetzner.edit')
+                ->withErrors(['hetzner_api_token' => $exception->getMessage()], 'hetznerToken');
+        }
+
+        if (! $tokenIsValid) {
             return Redirect::route('hetzner.edit')
                 ->withErrors(['hetzner_api_token' => __('Hetzner rejected this API token. Please check that you copied it correctly.')], 'hetznerToken');
         }
