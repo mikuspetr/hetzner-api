@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\HetznerApiException;
 use App\Http\Requests\UpdateHetznerTokenRequest;
 use App\Services\HetznerClient;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use RuntimeException;
 
 class HetznerController extends Controller
 {
@@ -67,7 +67,7 @@ class HetznerController extends Controller
         if ($user->hasHetznerApiToken()) {
             try {
                 $servers = $this->hetzner->servers($user);
-            } catch (RuntimeException $exception) {
+            } catch (HetznerApiException $exception) {
                 $error = $exception->getMessage();
             }
         }

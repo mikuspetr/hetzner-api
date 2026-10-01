@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Exceptions\HetznerApiException;
 use App\Models\User;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -57,7 +59,15 @@ class HetznerClient
      */
     public function verifyToken(string $token): bool
     {
-        $response = $this->requestWithToken($token)->get('/servers', ['per_page' => 1]);
+        try {
+            $response = $this->requestWithToken($token)->get('/servers', ['per_page' => 1]);
+        } catch (ConnectionException $exception) {
+            Log::warning('Could not reach the Hetzner Cloud API while verifying a token.', [
+                'message' => $exception->getMessage(),
+            ]);
+
+            return false;
+        }
 
         return $response->successful();
     }
@@ -100,7 +110,7 @@ class HetznerClient
                 'message' => $rawMessage,
             ]);
 
-            throw new RuntimeException(
+            throw new HetznerApiException(
                 'The Hetzner Cloud API could not fulfil this request. Please try again later.',
                 $response->status()
             );
