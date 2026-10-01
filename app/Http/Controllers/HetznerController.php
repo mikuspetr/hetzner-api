@@ -33,7 +33,7 @@ class HetznerController extends Controller
 
         if (! $this->hetzner->verifyToken($token)) {
             return Redirect::route('hetzner.edit')
-                ->withErrors(['hetzner_api_token' => 'Hetzner odmítl tento API token. Zkontrolujte, že jste jej správně zkopírovali.'], 'hetznerToken');
+                ->withErrors(['hetzner_api_token' => __('Hetzner rejected this API token. Please check that you copied it correctly.')], 'hetznerToken');
         }
 
         $request->user()->update([
