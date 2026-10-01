@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
 /**
@@ -17,6 +18,11 @@ use RuntimeException;
 class HetznerClient
 {
     protected string $baseUrl;
+
+    /**
+     * Timeout (in seconds) for requests made to the Hetzner Cloud API.
+     */
+    protected int $timeout = 10;
 
     public function __construct(?string $baseUrl = null)
     {
@@ -30,7 +36,8 @@ class HetznerClient
     {
         return Http::baseUrl($this->baseUrl)
             ->withToken($token)
-            ->acceptJson();
+            ->acceptJson()
+            ->timeout($this->timeout);
     }
 
     /**
@@ -86,9 +93,17 @@ class HetznerClient
     protected function throwIfFailed(Response $response): void
     {
         if ($response->failed()) {
-            $message = $response->json('error.message') ?? 'Unknown error communicating with the Hetzner API.';
+            $rawMessage = $response->json('error.message') ?? 'No additional details were provided.';
 
-            throw new RuntimeException($message, $response->status());
+            Log::warning('Hetzner Cloud API request failed.', [
+                'status' => $response->status(),
+                'message' => $rawMessage,
+            ]);
+
+            throw new RuntimeException(
+                'The Hetzner Cloud API could not fulfil this request. Please try again later.',
+                $response->status()
+            );
         }
     }
 }

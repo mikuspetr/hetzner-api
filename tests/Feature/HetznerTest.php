@@ -112,7 +112,8 @@ class HetznerTest extends TestCase
             ->get('/hetzner/servers');
 
         $response->assertOk();
-        $response->assertSee('unable to authenticate');
+        $response->assertSee('The Hetzner Cloud API could not fulfil this request.');
+        $response->assertDontSee('unable to authenticate');
     }
 
     public function test_servers_page_handles_missing_token(): void
