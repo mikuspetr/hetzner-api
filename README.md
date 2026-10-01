@@ -1,16 +1,16 @@
 # Hetzner API – Laravel App
 
-Laravel aplikace, která umožňuje přihlášeným uživatelům připojit jejich účet k [Hetzner Cloud API](https://docs.hetzner.cloud/) pomocí vlastního API tokenu a zobrazit jejich servery.
+A Laravel application that lets authenticated users connect their account to the [Hetzner Cloud API](https://docs.hetzner.cloud/) using their own API token, and view their servers.
 
-## Funkce
+## Features
 
-- Registrace a přihlášení uživatele (Laravel Breeze).
-- Stránka **Hetzner Cloud** (`/hetzner`), kde si uživatel uloží svůj Hetzner API token. Token se před uložením ověří voláním Hetzner API a je uložen zašifrovaný (`hetzner_api_token` sloupec, `encrypted` cast).
-- Možnost token kdykoliv odpojit.
-- Stránka se seznamem serverů (`/hetzner/servers`) načtených z Hetzner Cloud API pomocí uloženého tokenu uživatele.
-- `App\Services\HetznerClient` – jednoduchý HTTP klient pro komunikaci s Hetzner Cloud API jménem konkrétního uživatele.
+- User registration and login (Laravel Breeze).
+- A **Hetzner Cloud** page (`/hetzner`) where a user stores their Hetzner API token. The token is verified against the Hetzner API before being saved, and is stored encrypted (`hetzner_api_token` column, `encrypted` cast).
+- Ability to disconnect the token at any time.
+- A servers listing page (`/hetzner/servers`) that fetches the user's servers from the Hetzner Cloud API using their stored token.
+- `App\Services\HetznerClient` – a thin HTTP client for talking to the Hetzner Cloud API on behalf of a specific user.
 
-## Lokální spuštění
+## Running locally
 
 ```bash
 composer install
@@ -21,7 +21,7 @@ npm install && npm run build
 php artisan serve
 ```
 
-Po přihlášení přejděte na `/hetzner` a vložte API token vygenerovaný v Hetzner Cloud Console (Security > API Tokens).
+After logging in, visit `/hetzner` and paste in an API token generated from the Hetzner Cloud Console (Security > API Tokens).
 
 ---
 

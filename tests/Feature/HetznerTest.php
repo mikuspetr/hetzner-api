@@ -97,6 +97,24 @@ class HetznerTest extends TestCase
         $response->assertSee('web-1');
     }
 
+    public function test_servers_page_shows_error_when_api_call_fails(): void
+    {
+        Http::fake([
+            'api.hetzner.cloud/*' => Http::response(['error' => ['message' => 'unable to authenticate']], 403),
+        ]);
+
+        $user = User::factory()->create([
+            'hetzner_api_token' => 'a-now-revoked-token',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->get('/hetzner/servers');
+
+        $response->assertOk();
+        $response->assertSee('unable to authenticate');
+    }
+
     public function test_servers_page_handles_missing_token(): void
     {
         $user = User::factory()->create();

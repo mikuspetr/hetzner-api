@@ -24,6 +24,16 @@ class HetznerClient
     }
 
     /**
+     * Build an authenticated HTTP client for the given raw API token.
+     */
+    protected function requestWithToken(string $token): PendingRequest
+    {
+        return Http::baseUrl($this->baseUrl)
+            ->withToken($token)
+            ->acceptJson();
+    }
+
+    /**
      * Build an authenticated HTTP client for the given user.
      */
     protected function requestFor(User $user): PendingRequest
@@ -32,9 +42,7 @@ class HetznerClient
             throw new RuntimeException('This user has not connected a Hetzner Cloud API token yet.');
         }
 
-        return Http::baseUrl($this->baseUrl)
-            ->withToken($user->hetzner_api_token)
-            ->acceptJson();
+        return $this->requestWithToken($user->hetzner_api_token);
     }
 
     /**
@@ -42,10 +50,7 @@ class HetznerClient
      */
     public function verifyToken(string $token): bool
     {
-        $response = Http::baseUrl($this->baseUrl)
-            ->withToken($token)
-            ->acceptJson()
-            ->get('/servers', ['per_page' => 1]);
+        $response = $this->requestWithToken($token)->get('/servers', ['per_page' => 1]);
 
         return $response->successful();
     }
