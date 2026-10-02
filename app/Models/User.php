@@ -38,4 +38,12 @@ class User extends Authenticatable
     {
         return ! empty($this->hetzner_api_token);
     }
+
+    /**
+     * Determine whether the user can manage application users.
+     */
+    public function isAdmin(): bool
+    {
+        return in_array(strtolower($this->email), config('users.admin_emails', []), true);
+    }
 }

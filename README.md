@@ -5,6 +5,7 @@ A Laravel application that lets authenticated users connect their account to the
 ## Features
 
 - User registration and login (Laravel Breeze).
+- A **Users** page (`/users`) for authorized administrators to create, view, edit, and delete user accounts. Set `USER_ADMIN_EMAILS` to a comma-separated list of administrator email addresses.
 - A **Hetzner Cloud** page (`/hetzner`) where a user stores their Hetzner API token. The token is verified against the Hetzner API before being saved, and is stored encrypted (`hetzner_api_token` column, `encrypted` cast).
 - Ability to disconnect the token at any time.
 - A servers listing page (`/hetzner/servers`) that fetches the user's servers from the Hetzner Cloud API using their stored token.

@@ -18,6 +18,11 @@
                     <x-nav-link :href="route('hetzner.edit')" :active="request()->routeIs('hetzner.*')">
                         {{ __('Hetzner Cloud') }}
                     </x-nav-link>
+                    @can('manage-users')
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -76,6 +81,11 @@
             <x-responsive-nav-link :href="route('hetzner.edit')" :active="request()->routeIs('hetzner.*')">
                 {{ __('Hetzner Cloud') }}
             </x-responsive-nav-link>
+            @can('manage-users')
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    {{ __('Users') }}
+                </x-responsive-nav-link>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->
