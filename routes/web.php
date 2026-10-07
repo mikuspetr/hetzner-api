@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HetznerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,6 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/hetzner', [HetznerController::class, 'update'])->name('hetzner.update');
     Route::delete('/hetzner', [HetznerController::class, 'destroy'])->name('hetzner.destroy');
     Route::get('/hetzner/servers', [HetznerController::class, 'servers'])->name('hetzner.servers');
+
+    Route::resource('users', UserController::class)->middleware('can:manage-users');
 });
 
 require __DIR__.'/auth.php';
