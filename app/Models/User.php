@@ -37,6 +37,11 @@ class User extends Authenticatable
         return $this->hasOne(UserData::class);
     }
 
+    public function contact(): HasOne
+    {
+        return $this->hasOne(Contact::class);
+    }
+
     /**
      * Determine if the user has connected their Hetzner Cloud account.
      */
